@@ -14,4 +14,7 @@
 
 #define FODOOS_SECTOR_SIZE 512
 
+// Max file path length
+#define FODOOS_MAX_PATH 108
+
 #endif
