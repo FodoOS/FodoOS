@@ -17,4 +17,7 @@
 // Max file path length
 #define FODOOS_MAX_PATH 108
 
+#define FODOOS_MAX_FILESYSTEMS 12
+#define FODOOS_MAX_FILE_DESCRIPTORS 512
+
 #endif
