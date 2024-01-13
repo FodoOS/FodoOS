@@ -75,6 +75,12 @@ static int file_new_descriptor(struct file_descriptor** desc_out)
   return res;
 }
 
+static void file_free_descriptor(struct file_descriptor* desc)
+{
+  file_descriptors[desc->inedx-1] = 0x00;
+  kfree(desc);
+}
+
 static struct file_descriptor* file_get_descriptor(int fd)
 {
   if (fd <= 0 || fd >= FODOOS_MAX_FILE_DESCRIPTORS)
@@ -252,6 +258,10 @@ int fclose(int fd)
   }
 
   res = desc->filesystem->close(desc->private);
+  if (res == FODOOS_ALL_OK)
+  {
+    file_free_descriptor(desc);
+  }
 
 out:
   return res;

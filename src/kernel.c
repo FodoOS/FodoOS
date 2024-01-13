@@ -103,7 +103,8 @@ void kernel_main()
   {
     struct file_stat s;
     fstat(fd, &s);
-    print("");
+    fclose(fd);
+    print("closed file\n");
   }
 
   while (1) {}
