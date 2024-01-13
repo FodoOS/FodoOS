@@ -6,6 +6,7 @@
 #include "gdt/gdt.h"
 #include "idt/idt.h"
 #include "io/io.h"
+#include "task/tss.h"
 #include "string/string.h"
 #include "memory/memory.h"
 #include "memory/heap/kheap.h"
@@ -77,12 +78,16 @@ void panic(const char* msg)
 }
 
 static struct paging_4gb_chunk* kernel_chunk = 0;
+struct tss tss;
 
 struct gdt gdt_real[FODOOS_TOTAL_GDT_SEGMENTS];
 struct gdt_structured gdt_structured[FODOOS_TOTAL_GDT_SEGMENTS] = {
-  { .base = 0x00, .limit = 0x00, .type = 0x00 },            // NULL Segment
-  { .base = 0x00, .limit = 0xffffffff, .type = 0x9a },      // Kernel Code Segment
-  { .base = 0x00, .limit = 0xffffffff, .type = 0x92 }       // Kernel Dara Segment
+  { .base = 0x00, .limit = 0x00, .type = 0x00 },                    // NULL Segment
+  { .base = 0x00, .limit = 0xffffffff, .type = 0x9a },              // Kernel Code Segment
+  { .base = 0x00, .limit = 0xffffffff, .type = 0x92 },              // Kernel Data Segment
+  { .base = 0x00, .limit = 0xffffffff, .type = 0xf8 },              // User Code Segment
+  { .base = 0x00, .limit = 0xffffffff, .type = 0xf2 },              // User Data Segment
+  { .base = (uint32_t)&tss, .limit = sizeof(tss), .type = 0xE9 }    // TSS Segment
 };
 
 void kernel_main()
@@ -107,6 +112,11 @@ void kernel_main()
 
   // Initialize the interrupt descriptor table
   idt_init();
+
+  // Setup the TSS
+  memset(&tss, 0x00, sizeof(tss));
+  tss.esp0 = 0x600000;
+  tss.ss0 = KERNEL_DATA_SELECTOR;
 
   // Setup paging
   kernel_chunk = paging_new_4gb(PAGING_IS_WRITEABLE | PAGING_IS_PRESENT | PAGING_ACCESS_FROM_ALL);
