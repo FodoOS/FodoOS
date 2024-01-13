@@ -90,7 +90,7 @@ load32:
   jmp CODE_SEG:0x0100000
 
 ata_lba_read:
-  mov ebx, eax, ; Backup the LBA
+  mov ebx, eax ; Backup the LBA
   ; Send the highest 8 bits of the lba to hard disk controller
   shr eax, 24
   or eax, 0xE0 ; Select the  master drive
