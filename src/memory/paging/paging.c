@@ -37,7 +37,7 @@ void paging_free_4gb(struct paging_4gb_chunk* chunk)
   for (int i = 0; i < 1024; i++)
   {
     uint32_t entry = chunk->directory_entry[i];
-    uint32_t* table = (uint32_t*)(entry & 0xfffff000);
+    uint32_t* table = (uint32_t *)(entry & 0xfffff000);
     kfree(table);
   }
 
@@ -45,7 +45,7 @@ void paging_free_4gb(struct paging_4gb_chunk* chunk)
   kfree(chunk);
 }
 
-uint32_t*  paging_4gb_chunk_get_directory(struct paging_4gb_chunk* chunk)
+uint32_t* paging_4gb_chunk_get_directory(struct paging_4gb_chunk* chunk)
 {
   return chunk->directory_entry;
 }
@@ -55,7 +55,7 @@ bool paging_is_aligned(void* addr)
   return ((uint32_t)addr % PAGING_PAGE_SIZE) == 0;
 }
 
-int paging_get_index(void* virtual_address, uint32_t* directory_index_out, uint32_t* table_index_out)
+int paging_get_indexes(void* virtual_address, uint32_t* directory_index_out, uint32_t* table_index_out)
 {
   int res = 0;
   if (!paging_is_aligned(virtual_address))
@@ -83,7 +83,7 @@ void* paging_align_address(void* ptr)
 
 int paging_map(uint32_t* directory, void* virt, void* phys, int flags)
 {
-  if(((unsigned int)virt % PAGING_PAGE_SIZE) || ((unsigned int)phys % PAGING_PAGE_SIZE))
+  if (((unsigned int)virt % PAGING_PAGE_SIZE) || ((unsigned int)phys % PAGING_PAGE_SIZE))
   {
     return -EINVARG;
   }
@@ -151,14 +151,14 @@ int paging_set(uint32_t* directory, void* virt, uint32_t val)
 
   uint32_t directory_index = 0;
   uint32_t table_index = 0;
-  int res = paging_get_index(virt, &directory_index, &table_index);
+  int res = paging_get_indexes(virt, &directory_index, &table_index);
   if (res < 0)
   {
     return res;
   }
 
   uint32_t entry = directory[directory_index];
-  uint32_t* table = (uint32_t*)(entry & 0xfffff000);
+  uint32_t* table = (uint32_t *)(entry & 0xfffff000);
   table[table_index] = val;
 
   return 0;
