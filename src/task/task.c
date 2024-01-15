@@ -40,6 +40,7 @@ struct task* task_new(struct process* process)
   {
     task_head = 0;
     task_tail = 0;
+    current_task = task;
     goto out;
   }
 
@@ -137,6 +138,7 @@ int task_init(struct task* task, struct process* process)
 
   task->registers.ip = FODOOS_PROGRAM_VIRTUAL_ADDRESS;
   task->registers.ss = USER_DATA_SEGMENT;
+  task->registers.cs = USER_CODE_SEGMENT;
   task->registers.esp = FODOOS_PROGRAM_VIRTUAL_STACK_ADRESS_START;
 
   task->process = process;

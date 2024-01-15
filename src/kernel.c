@@ -3,10 +3,13 @@
 #include <stdint.h>
 
 #include "config.h"
+#include "status.h"
 #include "gdt/gdt.h"
 #include "idt/idt.h"
 #include "io/io.h"
 #include "task/tss.h"
+#include "task/task.h"
+#include "task/process.h"
 #include "string/string.h"
 #include "memory/memory.h"
 #include "memory/heap/kheap.h"
@@ -128,16 +131,16 @@ void kernel_main()
   enable_paging();
 
   // Enable the system interrupts
-  enable_interrupts();
+  // enable_interrupts(); enable interrupt after first program has run
 
-  int fd = fopen("0:/hello.txt", "r");
-  if (fd)
+  struct process* process = 0;
+  int res = process_load("0:/blank.bin", &process);
+  if (res != FODOOS_ALL_OK)
   {
-    struct file_stat s;
-    fstat(fd, &s);
-    fclose(fd);
-    print("closed file\n");
+    panic("Failed to load blank.bin\n");
   }
+
+  task_run_first_ever_task();
 
   while (1) {}
 }
