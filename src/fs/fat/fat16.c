@@ -743,8 +743,6 @@ out:
   return res;
 }
 
-
-
 int fat16_close(void* private)
 {
   fat16_free_file_descriptor((struct fat_file_descriptor*)private);
