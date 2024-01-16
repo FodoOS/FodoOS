@@ -81,6 +81,13 @@ void panic(const char* msg)
 }
 
 static struct paging_4gb_chunk* kernel_chunk = 0;
+
+void kernel_page()
+{
+  kernel_registers();
+  paging_switch(kernel_chunk);
+}
+
 struct tss tss;
 
 struct gdt gdt_real[FODOOS_TOTAL_GDT_SEGMENTS];
