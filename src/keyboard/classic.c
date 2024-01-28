@@ -39,7 +39,7 @@ int classic_keyboard_init()
   return 0;
 }
 
-uint8_t classic_keyboard__scancode_to_char(uint8_t scancode)
+uint8_t classic_keyboard_scancode_to_char(uint8_t scancode)
 {
   size_t size_of_keyboard_set_one = sizeof(keyboard_scan_set_one) / sizeof(uint8_t);
   if (scancode > size_of_keyboard_set_one)
@@ -63,7 +63,7 @@ void classic_keyboard_handle_interrupt()
     return;
   }
 
-  uint8_t c = classic_keyboard__scancode_to_char(scancode);
+  uint8_t c = classic_keyboard_scancode_to_char(scancode);
   if (c != 0)
   {
     keyboard_push(c);

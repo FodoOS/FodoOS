@@ -72,15 +72,15 @@ char keyboard_pop()
   }
 
   struct process* process = task_current()->process;
-  int real_inedx = process->keyboard.head % sizeof(process->keyboard.buffer);
-  char c = process->keyboard.buffer[real_inedx];
+  int real_index = process->keyboard.head % sizeof(process->keyboard.buffer);
+  char c = process->keyboard.buffer[real_index];
   if (c == 0x00)
   {
-    // Nothing to pop, return zero.
+    // Nothing to pop return zero.
     return 0;
   }
 
-  process->keyboard.buffer[real_inedx] = 0;
+  process->keyboard.buffer[real_index] = 0;
   process->keyboard.head++;
   return c;
 }

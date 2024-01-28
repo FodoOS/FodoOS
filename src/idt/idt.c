@@ -32,6 +32,7 @@ void interrupt_handler(int interrupt, struct interrupt_frame* frame)
     task_current_save_state(frame);
     interrupt_callbacks[interrupt](frame);
   }
+
   task_page();
   outb(0x20, 0x20);
 }
