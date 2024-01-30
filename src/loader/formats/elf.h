@@ -67,7 +67,7 @@ struct elf32_phdr
   elf32_addr p_paddr;
   elf32_word p_filesz;
   elf32_word p_memsz;
-  elf32_word p_falgs;
+  elf32_word p_flags;
   elf32_word p_align;
 } __attribute__((packed));
 
