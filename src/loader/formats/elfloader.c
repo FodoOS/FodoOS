@@ -60,7 +60,7 @@ struct elf32_phdr* elf_pheader(struct elf_header* header)
     return 0;
   }
 
-  return (struct elf32_phdr*)((int)header+header->e_phoff);
+  return (struct elf32_phdr*)((int)header + header->e_phoff);
 }
 
 struct elf32_phdr* elf_program_header(struct elf_header* header, int index)
@@ -105,7 +105,7 @@ int elf_validate_loaded(struct elf_header* header)
 
 int elf_process_phdr_pt_load(struct elf_file* elf_file, struct elf32_phdr* phdr)
 {
-  if (elf_file->virtual_base_address < (void*)phdr->p_vaddr || elf_file->virtual_base_address == 0x00)
+  if (elf_file->virtual_base_address > (void*)phdr->p_vaddr || elf_file->virtual_base_address == 0x00)
   {
     elf_file->virtual_base_address = (void*)phdr->p_vaddr;
     elf_file->physical_base_address = elf_memory(elf_file) + phdr->p_offset;
@@ -138,7 +138,7 @@ int elf_process_pheaders(struct elf_file* elf_file)
 {
   int res = 0;
   struct elf_header* header = elf_header(elf_file);
-  
+
   for (int i = 0; i < header->e_phnum; i++)
   {
     struct elf32_phdr* phdr = elf_program_header(header, i);
