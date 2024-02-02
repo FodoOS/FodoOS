@@ -1,5 +1,5 @@
-#ifndef STDLIB_H
-#define STDLIB_H
+#ifndef FODOOS_STDLIB_H
+#define FODOOS_STDLIB_H
 
 #include <stddef.h>
 

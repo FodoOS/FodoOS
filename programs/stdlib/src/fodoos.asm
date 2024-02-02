@@ -4,6 +4,7 @@ section .asm
 
 global print:function
 global getkey:function
+global fodoos_putchar:function
 global fodoos_malloc:function
 global fodoos_free:function
 
@@ -24,6 +25,17 @@ getkey:
   mov ebp, esp
   mov eax, 2 ; Command getkey
   int 0x80
+  pop ebp
+  ret
+
+; void fodoos_putchar(char c)
+fodoos_putchar:
+  push ebp
+  mov ebp, esp
+  mov eax, 3 ; Command putchar
+  push dword[ebp+8] ; Variable "c"
+  int 0x80
+  add esp, 4
   pop ebp
   ret
 
