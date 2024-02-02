@@ -2,6 +2,7 @@
 #define PROCESS_H
 
 #include <stdint.h>
+#include <stdbool.h>
 
 #include "task.h"
 #include "config.h"
@@ -57,5 +58,6 @@ struct process* process_current();
 struct process* process_get(int process_id);
 
 void* process_malloc(struct process* process, size_t size);
+void process_free(struct process* process, void* ptr);
 
 #endif
