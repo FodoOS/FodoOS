@@ -3,7 +3,7 @@
 section .asm
 
 global print:function
-global getkey:function
+global fodoos_getkey:function
 global fodoos_putchar:function
 global fodoos_malloc:function
 global fodoos_free:function
@@ -19,8 +19,8 @@ print:
   pop ebp
   ret
 
-; int getkey()
-getkey:
+; int fodoos_getkey()
+fodoos_getkey:
   push ebp
   mov ebp, esp
   mov eax, 2 ; Command getkey
