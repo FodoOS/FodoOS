@@ -12,5 +12,6 @@ void fodoos_free(void* ptr);
 
 int fodoos_getkeyblock();
 void fodoos_terminal_readline(char* out, int max, bool output_while_typing);
+void fodoos_process_load_start(const char* filename);
 
 #endif

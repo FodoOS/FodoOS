@@ -7,6 +7,7 @@ global fodoos_getkey:function
 global fodoos_putchar:function
 global fodoos_malloc:function
 global fodoos_free:function
+global fodoos_process_load_start:function
 
 ; void print(const char* message)
 print:
@@ -58,5 +59,16 @@ fodoos_free:
   push dword[ebp+8]
   int 0x80
   add esp, 4
+  pop ebp
+  ret
+
+; void fodoos_process_load_start(const char* filename)
+fodoos_process_load_start:
+  push ebp
+  mov ebp, esp
+  mov eax, 6 ; Command 6 process load start (starts a process)
+  push dword[ebp+8]
+  int 0x80
+  add esp, 8
   pop ebp
   ret
