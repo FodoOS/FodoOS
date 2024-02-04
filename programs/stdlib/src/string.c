@@ -34,19 +34,19 @@ int strnlen(const char* ptr, int max)
   return i;
 }
 
-int strnlen_terminator(const char* str, int max, char terminator)
+int strlen_terminator(const char* str, int max, char terminator)
 {
   int i = 0;
-  for (i = 0; i < max; i++)
+  for (int i = 0; i < max; i++)
   {
-    if (str[i] == '\0' || str[i] == terminator)
+    if (str[i] =='\0' || str[i] == terminator)
       break;
   }
 
   return i;
 }
 
-int istrncmp(const char* s1, const char* s2, int n)
+int istrcmp(const char* s1, const char* s2, int n)
 {
   unsigned char u1, u2;
 
@@ -63,7 +63,7 @@ int istrncmp(const char* s1, const char* s2, int n)
   return 0;
 }
 
-int strncmp(const char* str1, const char* str2, int n)
+int strcmp(const char* str1, const char* str2, int n)
 {
   unsigned char u1, u2;
 
@@ -118,4 +118,62 @@ bool isdigit(char c)
 int tonumericdigit(char c)
 {
   return c - 48;
+}
+
+char* sp = 0;
+char* strtok(char* str, const char* delimiters)
+{
+  int i = 0;
+  int len = strlen(delimiters);
+  if (!str && !sp)
+    return 0;
+
+  if (str && !sp)
+  {
+    sp = str;
+  }
+
+  char* p_start = sp;
+  while (1)
+  {
+    for (i = 0; i < len; i++)
+    {
+      if (*p_start == delimiters[i])
+      {
+        p_start++;
+        break;
+      }
+    }
+
+    if (i == len)
+    {
+      sp = p_start;
+      break;
+    }
+  }
+
+  if (*sp == '\0')
+  {
+    sp = 0;
+    return sp;
+  }
+
+  // Find end of substring
+  while (*sp != '\0')
+  {
+    for (i = 0; i < len; i++)
+    {
+      if (*sp == delimiters[i])
+      {
+        *sp = '\0';
+        break;
+      }
+    }
+
+    sp++;
+    if (i < len)
+      break;
+  }
+
+  return p_start;
 }
