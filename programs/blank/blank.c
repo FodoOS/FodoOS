@@ -6,15 +6,10 @@
 int main(int argc, char** argv)
 {
   
-  char* ptr = malloc(20);
-  strcpy(ptr, "Hello world");
-
-  print(ptr);
-
-  free(ptr);
-
-  ptr[0] = 'B';
-  print("abc\n");
+  char str[] = "hello world";
+  struct command_argument* root_argument = fodoos_parse_command(str, sizeof(str));
+  printf("%s\n", root_argument->argument);
+  printf("%s\n", root_argument->next->argument);
 
   while (1)
   {
