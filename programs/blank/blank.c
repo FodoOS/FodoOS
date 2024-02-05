@@ -6,10 +6,10 @@
 int main(int argc, char** argv)
 {
   
-  char str[] = "hello world";
-  struct command_argument* root_argument = fodoos_parse_command(str, sizeof(str));
-  printf("%s\n", root_argument->argument);
-  printf("%s\n", root_argument->next->argument);
+  struct process_arguments arguments;
+  fodoos_process_get_arguments(&arguments);
+
+  printf("%i %s\n", arguments.argc, arguments.argv[0]);
 
   while (1)
   {

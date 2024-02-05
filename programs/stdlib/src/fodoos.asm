@@ -8,6 +8,7 @@ global fodoos_putchar:function
 global fodoos_malloc:function
 global fodoos_free:function
 global fodoos_process_load_start:function
+global fodoos_process_get_arguments:function
 
 ; void print(const char* message)
 print:
@@ -70,5 +71,16 @@ fodoos_process_load_start:
   push dword[ebp+8]
   int 0x80
   add esp, 8
+  pop ebp
+  ret
+
+; void fodoos_process_get_arguments(struct process_arguments* arguments)
+fodoos_process_get_arguments:
+  push ebp
+  mov ebp, esp
+  mov eax, 8 ; Command 8 Gets the process arguments
+  push dword[ebp+8] ; Variable arguments
+  int 0x80
+  add esp, 4
   pop ebp
   ret
