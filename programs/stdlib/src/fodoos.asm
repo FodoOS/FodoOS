@@ -10,6 +10,7 @@ global fodoos_free:function
 global fodoos_process_load_start:function
 global fodoos_system:function
 global fodoos_process_get_arguments:function
+global fodoos_exit:function
 
 ; void print(const char* message)
 print:
@@ -94,5 +95,14 @@ fodoos_process_get_arguments:
   push dword[ebp+8] ; Variable arguments
   int 0x80
   add esp, 4
+  pop ebp
+  ret
+
+; void fodoos_exit()
+fodoos_exit:
+  push ebp
+  mov ebp, esp
+  mov eax, 9 ; Command 9 process exit
+  int 0x80
   pop ebp
   ret

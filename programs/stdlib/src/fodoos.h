@@ -24,6 +24,7 @@ void fodoos_free(void* ptr);
 void fodoos_process_load_start(const char* filename);
 int fodoos_system(struct command_argument* arguments);
 void fodoos_process_get_arguments(struct process_arguments* arguments);
+void fodoos_exit();
 
 int fodoos_getkeyblock();
 void fodoos_terminal_readline(char* out, int max, bool output_while_typing);
