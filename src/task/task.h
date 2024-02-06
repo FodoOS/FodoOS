@@ -52,6 +52,7 @@ int task_page();
 int task_page_task(struct task* task);
 
 void task_run_first_ever_task();
+void task_next();
 
 void task_return(struct registers* regs);
 void restore_general_purpose_registers(struct registers* regs);
