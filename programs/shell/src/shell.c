@@ -11,7 +11,8 @@ int main(int argc, char** argv)
     print("> ");
     char buf[1024];
     fodoos_terminal_readline(buf, sizeof(buf), true);
-    fodoos_process_load_start(buf);
+    print("\n");
+    fodoos_system_run(buf);
     print("\n");
   }
 
