@@ -5,11 +5,8 @@
 
 int main(int argc, char** argv)
 {
-  
-  struct process_arguments arguments;
-  fodoos_process_get_arguments(&arguments);
-
-  printf("%i %s\n", arguments.argc, arguments.argv[0]);
+  print(argv[0]);
+  print("Did this work?\n");
 
   while (1)
   {
