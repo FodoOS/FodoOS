@@ -111,24 +111,28 @@ gdt_descriptor:
   dd gdt                ; Base address of GDT
 
 ; Page table definitions
+%define PS_FLAG 0x03    ; Page size flag for 4096 bytes
+%define PAGE_INCREMENT 0x1000 ; 4096 byte increment
+
 align 4096
 PML4_Table:
-  dq PDPT_TABLE + 0x03  ; PML4 Entry poiting to PDPT (Present, RW)
-  times 511 dq 0        ; Null the remaining entries
+  dq PDPT_TABLE + PS_FLAG   ; PML4 Entry poiting to PDPT (Present, RW)
+  times 511 dq 0            ; Null the remaining entries
 
 align 4096
 PDPT_TABLE:
-  dq PD_Table + 0x03    ; PDPT entry pointing to PD (Present, RW)
-  times 511 dq 0        ; Null the remaining
-
-%define PS_FLAG 0x83    ; Page size flag for 2 Mib bytes
-%define PAGE_INCREMENT 0x200000
+  dq PD_Table + PS_FLAG     ; PDPT entry pointing to PD (Present, RW)
+  times 511 dq 0            ; Null the remaining
 
 align 4096
 PD_Table:
-  %assign addr 0x0000000  ; Start address
-  %rep 65                 ; Number of pages
+  dq PT_Table + PS_FLAG
+  times 511 dq 0
+
+align 4096
+PT_Table:
+  %assign addr 0x0000000    ; Start address
+  %rep 512                  ; Number of pages
     dq addr + PS_FLAG
     %assign addr addr + PAGE_INCREMENT
   %endrep
-  times 509 dq 0            ; Remaining entries to zero
