@@ -1,12 +1,11 @@
 [BITS 32]
 
 global _start
-global kernel_registers
 
-extern kernel_main
-
+; segment Selectors
 CODE_SEG equ 0x08
 DATA_SEG equ 0x10
+LONG_MODE_CODE_SEG equ 0x18
 
 _start:
   mov ax, DATA_SEG
@@ -15,33 +14,92 @@ _start:
   mov fs, ax
   mov gs, ax
   mov ss, ax
+
+  ; Set up the stack
   mov ebp, 0x00200000
   mov esp, ebp
 
-  ; Remap the master PIC
-  mov al, 00010001b
-  out 0x20, al ; Tell master PIC
+  ; Load the global descriptor table (GDT)
+  lgdt [gdt_descriptor]
 
-  mov al, 0x20 ; Interrupt 0x20 is where master ISR should start
-  out 0x21, al
+  ; Enable PAE (Physical Address Extension) in CR4
+  mov eax, cr4
+  or eax, 1 << 5
+  mov cr4, eax
 
-  mov al, 0x04
-  out 0x21, al
+  ; Setup the page table
+  mov eax, PML4_Table
+  mov cr3, eax
 
-  mov al, 00000001b
-  out 0x21, al
-  ; End remap of the master PIC
+  ; IA32_EFER
+  mov ecx, 0xC0000080 ; IA32_EFER Index
+  rdmsr               ; Reads IA32_EFER_MSR into EDX:EAX
+  or eax, 0x100       ; (Long Mode Enable) bit (bit 8)
+  wrmsr               ; Write back to IA32_EFER_MSR
 
-  call kernel_main
+  ; Enable paging in CR0
+  mov eax, cr0
+  or eax, 1 << 31     ; Set PG bit (bit 31)
+  mov cr0, eax
 
+  ; JMP TO 64 BIT MODE
+  jmp LONG_MODE_CODE_SEG:long_mode_entry
+
+[BITS 64]
+
+long_mode_entry:
   jmp $
 
-kernel_registers:
-  mov ax, 0x10
-  mov ds, ax
-  mov es, ax
-  mov gs, ax
-  mov fs, ax
-  ret
+; Global descriptor table (GDT)
+align 8
+gdt:
+  ; Null descriptor (required)
+  dq 0x0000000000000000
 
-times 512-($ - $$) db 0
+  ; 32-Bit code segment descriptor
+  dw 0xffff     ; Segment limit 0-15 bits
+  dw 0          ; Base first 0-15 bits
+  db 0          ; Base 16-12 bits
+  db 0x9a       ; Access byte
+  db 11001111b  ; High 4 bit flags and low 4 bit flags
+  db 0          ; Base 24-31 bits
+
+  ; 32 Bit Data segment descriptor
+  dw 0xffff     ; Segement limit 0-15 bits
+  dw 0          ; Base first 0-15 bits
+  db 0          ; Base 16-23 bits
+  db 0x92       ; Access byte
+  db 11001111b  ; High 4 bit flags and low 4 bit flags
+  db 0          ; Base 24-31 bits
+
+  ; 64 bit code segment descriptor
+  dw 0x0000     ; Segment limit low (ignored in long mode)
+  dw 0x0000     ; Base address low
+  db 0x00       ; Base address middle
+  db 0x9A       ; Acces byte: Code Segment, executable and readable
+  db 0x20       ; Flag: Long Mode Segment
+  db 0x00       ; Base address high
+
+gdt_end:
+
+gdt_descriptor:
+  dw gdt_end - gdt - 1  ; Size of GDT - 1
+  dd gdt                ; Base address of GDT
+
+; Page table definitions
+align 4096
+PML4_Table:
+  dq PDPT_TABLE + 0x03  ; PML4 Entry poiting to PDPT (Present, RW)
+  times 511 dq 0        ; Null the remaining entries
+
+align 4096
+PDPT_TABLE:
+  dq PD_Table + 0x03    ; PDPT entry pointing to PD (Present, RW)
+  times 511 dq 0        ; Null the remaining
+
+align 4096
+PD_Table:
+  ; Map the first 4 MB of memory using 2 MB pages
+  dq (0x0000000000000083)   ; PD Entry for 0x00000000 - 0x00200000
+  dq (0x0000000020000083)   ; PD Entry for 0x00200000 - 0x00400000
+  times 510 dq 0            ; Remaining entries to zero
