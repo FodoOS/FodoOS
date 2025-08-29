@@ -13,8 +13,8 @@
 // #include "task/process.h"
 // #include "isr80h/isr80h.h"
 #include "string/string.h"
-// #include "memory/memory.h"
-// #include "memory/heap/kheap.h"
+#include "memory/memory.h"
+#include "memory/heap/kheap.h"
 // #include "memory/paging/paging.h"
 // #include "disk/disk.h"
 // #include "disk/streamer.h"
@@ -131,6 +131,14 @@ void kernel_main()
 {
   terminal_initialize();
   print("Hello 64-bit!\n");
+
+  kheap_init();
+  char* data = kmalloc(50);
+  data[0] = 'A';
+  data[1] = 'B';
+  data[2] = 'C';
+  data[3] = 0x00;
+  print(data);
 
   // ------------------
   // OLD CODE BELOW

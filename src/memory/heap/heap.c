@@ -1,6 +1,7 @@
 #include "heap.h"
 #include "status.h"
 #include "memory/memory.h"
+#include <stdint.h>
 #include <stdbool.h>
 
 static int heap_validate_table(void* ptr, void* end, struct heap_table* table)
@@ -21,7 +22,7 @@ out:
 
 static bool heap_validate_alignment(void* ptr)
 {
-  return ((unsigned int)ptr % FODOOS_HEAP_BLOCK_SIZE) == 0;
+  return ((uintptr_t)ptr % FODOOS_HEAP_BLOCK_SIZE) == 0;
 }
 
 int heap_create(struct heap* heap, void* ptr, void* end, struct heap_table* table)
