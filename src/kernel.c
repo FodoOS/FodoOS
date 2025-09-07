@@ -15,7 +15,7 @@
 #include "string/string.h"
 #include "memory/memory.h"
 #include "memory/heap/kheap.h"
-// #include "memory/paging/paging.h"
+#include "memory/paging/paging.h"
 // #include "disk/disk.h"
 // #include "disk/streamer.h"
 // #include "fs/pparser.h"
@@ -127,18 +127,28 @@ void print(const char* str)
 //   { .base = (uint32_t)&tss, .limit = sizeof(tss), .type = 0xE9 }    // TSS Segment
 // };
 
+// Page Descriptor
+struct paging_desc* kernel_paging_desc = 0;
+
 void kernel_main()
 {
   terminal_initialize();
   print("Hello 64-bit!\n");
 
-  // kheap_init();
-  // char* data = kmalloc(50);
-  // data[0] = 'A';
-  // data[1] = 'B';
-  // data[2] = 'C';
-  // data[3] = 0x00;
-  // print(data);
+  kheap_init();
+  char* data = kmalloc(50);
+  data[0] = 'A';
+  data[1] = 'B';
+  data[2] = 'C';
+  data[3] = 0x00;
+  print(data);
+
+  kernel_paging_desc = paging_desc_new(PAGING_MAP_LEVEL_4);
+  // Map the first 419 MB of memory to the first 419 MB of memory
+  paging_map_range(kernel_paging_desc, (void*)0x00000000, (void*)0x00000000, 1024*100, PAGING_IS_WRITEABLE | PAGING_IS_PRESENT);
+  paging_switch(kernel_paging_desc);
+  data[0] = 'M';
+  print(data);
 
   // ------------------
   // OLD CODE BELOW

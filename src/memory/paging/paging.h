@@ -13,7 +13,7 @@ enum
 
 typedef uint8_t paging_map_level_t;
 
-#define PAGING_CACHE_DIASBLED  0b00010000
+#define PAGING_CACHE_DISABLED  0b00010000
 #define PAGING_WRITE_THROUGH   0b00001000
 #define PAGING_ACCESS_FROM_ALL 0b00000100
 #define PAGING_IS_WRITEABLE    0b00000010
@@ -21,7 +21,7 @@ typedef uint8_t paging_map_level_t;
 
 #define PAGING_TOTAL_ENTRIES_PER_TABLE 512
 
-// 4 KB oages
+// 4 KB pages
 #define PAGING_PAGE_SIZE 4096
 
 enum
@@ -55,7 +55,7 @@ struct paging_desc_entry
   uint64_t reserved1: 4; // Bits 8-11: Reserved must be 0
   uint64_t address : 40; // Bits 12-51: PDPT Base adddress
   uint64_t available : 11; // Bits 52-62: Available to software
-  uint64_t execute_disable : 3; //Bits 63: XD
+  uint64_t execute_disable : 1; //Bits 63: XD
 } __attribute__((packed));
 
 struct paging_pml_entries
@@ -71,6 +71,19 @@ struct paging_desc
   // Indicated weather the PMLis level 4 or r5 or a future level
   paging_map_level_t level;
 } __attribute__((packed));
+
+// < Assembly Function start
+void paging_invalidate_tlb_entry(void* addr);
+void paging_load_directory(uintptr_t* directory);
+// > Assembly Functions end
+
+void* paging_align_address(void* ptr);
+void* paging_align_to_lower_page(void* addr);
+void paging_switch(struct paging_desc* desc);
+struct paging_desc* paging_desc_new(paging_map_level_t root_map_level);
+int paging_map(struct paging_desc* desc, void* virt, void* phys, int flags);
+int paging_map_to(struct paging_desc* desc, void* virt, void* phys, void* phys_end, int flags);
+int paging_map_range(struct paging_desc* desc, void* virt, void* phys, size_t count, int flags);
 
 // struct paging_4gb_chunk
 // {
