@@ -136,3 +136,8 @@ clean:
 	rm -rf ./bin/os.bin
 	rm -rf $(FILES)
 	rm -rf ./build/kernelfull.o
+	rm -rf ./bin/*
+	rm -rf ./build/*
+	rm -rf bin build
+	# Recursivly remove all .o files
+	find build -type f -name "*.o" | xargs rm -f
