@@ -17,15 +17,15 @@ static bool paging_map_level_is_valid(paging_map_level_t level)
   return level == PAGING_MAP_LEVEL_4;
 }
 
-static bool paging_is_aligned(void* addr)
-{
-  return ((uintptr_t)addr % PAGING_PAGE_SIZE) == 0;
-}
-
 static bool paging_null_entry(struct paging_desc_entry* entry)
 {
   struct paging_desc_entry null_desc = {0};
   return memcmp(entry, &null_desc, sizeof(struct paging_desc_entry)) == 0;
+}
+
+bool paging_is_aligned(void* addr)
+{
+  return ((uintptr_t)addr % PAGING_PAGE_SIZE) == 0;
 }
 
 void* paging_align_address(void* ptr)

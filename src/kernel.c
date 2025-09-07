@@ -14,6 +14,7 @@
 // #include "isr80h/isr80h.h"
 #include "string/string.h"
 #include "memory/memory.h"
+#include "memory/heap/heap.h"
 #include "memory/heap/kheap.h"
 #include "memory/paging/paging.h"
 // #include "disk/disk.h"
@@ -141,7 +142,7 @@ void kernel_main()
   terminal_initialize();
   print("Hello 64-bit!\n");
 
-  kheap_init();
+  kheap_init(FODOOS_HEAP_SIZE_BYTES);
   char* data = kmalloc(50);
   data[0] = 'A';
   data[1] = 'B';
@@ -155,6 +156,24 @@ void kernel_main()
   paging_switch(kernel_paging_desc);
   data[0] = 'M';
   print(data);
+  print("\n");
+
+  struct heap* kernel_heap = kheap_get();
+  size_t total = heap_total_size(kernel_heap);
+  size_t used = heap_total_used(kernel_heap);
+  size_t available = heap_total_available(kernel_heap);
+
+  print("Total heap size: ");
+  print(itoa(total));
+  print("\n");
+
+  print("Total heap used: ");
+  print(itoa(used));
+  print("\n");
+
+  print("Total heap available: ");
+  print(itoa(available));
+  print("\n");
 
   // ------------------
   // OLD CODE BELOW

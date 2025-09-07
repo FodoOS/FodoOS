@@ -77,6 +77,7 @@ void paging_invalidate_tlb_entry(void* addr);
 void paging_load_directory(uintptr_t* directory);
 // > Assembly Functions end
 
+bool paging_is_aligned(void* addr);
 void* paging_align_address(void* ptr);
 void* paging_align_to_lower_page(void* addr);
 void paging_switch(struct paging_desc* desc);
